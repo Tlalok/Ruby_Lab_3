@@ -1,10 +1,10 @@
 class UsersController < ApplicationController
-	
-	def index
-  	render json: User.all
+  
+  def index
+    render json: User.all
   end
 
-	def show
+  def show
     user_id = params[:id]
     render json: User.find(user_id)
   end
@@ -21,9 +21,9 @@ class UsersController < ApplicationController
   end
 
   def favourite_destination
-  	user_id = params[:id]
-  	airport_visits = User.find(user_id).trips.group(:airport_to).count
-		render json: city_visits.max_by{|airport, visits| visits}
+    user_id = params[:id]
+    airport_visits = User.find(user_id).trips.group(:airport_to).count
+    render json: city_visits.max_by{|airport, visits| visits}
   end
 
 end
