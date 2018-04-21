@@ -1,8 +1,19 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-  resources :users, only: [:index, :show, :new]  
-  resources :airports, only: [:index, :show]  
 
   get 'airports/most-visitable', to: 'airports#most_visitable'
+
+  resources :countries, only: [:index, :show, :create] do
+    resources :comments, only:[:index, :show, :create, :update, :destroy], shallow: true
+  end
+
+  resources :towns, only: [:index, :show, :create] do
+    resources :comments, only:[:index, :show, :create, :update, :destroy], shallow: true
+  end
+
+  resources :airports, only: [:index, :show, :create]  
+  resources :planes, only: [:index, :show, :create]  
+  resources :users, only: [:index, :show, :create]  
+  
   get 'users/favourite_destination/:id', to: 'users#favourite_destination'
+  get 'users/:id/trips', to: 'users#get_trips'
 end

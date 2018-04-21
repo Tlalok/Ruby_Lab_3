@@ -9,7 +9,7 @@ class UsersController < ApplicationController
     render json: User.find(user_id)
   end
 
-  def new
+  def create
     user = User.new
     user.name = params[:name]
     user.second_name = params[:second_name]
@@ -18,6 +18,12 @@ class UsersController < ApplicationController
     user.email = params[:email]
     user.save
     render json: user
+  end
+
+  def get_trips
+    user_id = params[:id]
+    user = User.find(user_id)
+    render json: user.trips
   end
 
   def favourite_destination
