@@ -1,19 +1,27 @@
 Rails.application.routes.draw do
 
-  get 'airports/most-visitable', to: 'airports#most_visitable'
-
-  resources :countries, only: [:index, :show, :create] do
-    resources :comments, only:[:index, :show, :create, :update, :destroy], shallow: true
+  resources :countries, except: [:new, :edit] do
+    resources :comments, except: [:new, :edit], shallow: true
   end
 
-  resources :towns, only: [:index, :show, :create] do
-    resources :comments, only:[:index, :show, :create, :update, :destroy], shallow: true
+  resources :towns, except: [:new, :edit] do
+    resources :comments, except: [:new, :edit], shallow: true
   end
 
-  resources :airports, only: [:index, :show, :create]  
-  resources :planes, only: [:index, :show, :create]  
-  resources :users, only: [:index, :show, :create]  
+  get 'airports/most-visitable',         to: 'airports#most_visitable'
+  get 'airports/:airport_id/trips_from', to: 'trips#trips_from'
+  get 'airports/:airport_id/trips_to',   to: 'trips#trips_to'
+  resources :airports, except: [:new, :edit]
+
+  resources :planes, except: [:new, :edit] do
+    resources :trips, only: :index
+  end 
+
+  get 'users/:id/favourite_destination', to: 'users#favourite_destination'
+  resources :users, except: [:new, :edit] do
+    resources :trips, only: :index
+  end
+
+  resources :trips, except: [:new, :edit]
   
-  get 'users/favourite_destination/:id', to: 'users#favourite_destination'
-  get 'users/:id/trips', to: 'users#get_trips'
 end

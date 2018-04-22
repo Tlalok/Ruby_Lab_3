@@ -1,35 +1,43 @@
 class UsersController < ApplicationController
   
+  before_action :set_user, except: [:index, :create]
+
   def index
     render json: User.all
   end
 
   def show
-    user_id = params[:id]
-    render json: User.find(user_id)
+    render json: @user
   end
 
   def create
-    user = User.new
-    user.name = params[:name]
-    user.second_name = params[:second_name]
-    user.password = params[:password]
-    user.phone = params[:phone]
-    user.email = params[:email]
-    user.save
+    user = User.create!(user_params)
     render json: user
   end
 
-  def get_trips
-    user_id = params[:id]
-    user = User.find(user_id)
-    render json: user.trips
+  def update
+    @user.update!(user_params)
+    head :ok
+  end
+
+  def destroy
+    render json: @user.destroy!
   end
 
   def favourite_destination
-    user_id = params[:id]
-    airport_visits = User.find(user_id).trips.group(:airport_to).count
-    render json: city_visits.max_by{|airport, visits| visits}
+    airport_visits = @user.trips.group(:airport_to).count
+    render json: airport_visits.max_by{|airport, visits| visits}
+  end
+
+private 
+  
+  def set_user
+    @user = User.find(params[:id])
+  end
+
+  def user_params
+    params.require([:time_in, :time_out, :password, :email])
+    params.permit(:name, :second_name, :password, :phone, :email)
   end
 
 end

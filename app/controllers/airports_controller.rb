@@ -1,26 +1,43 @@
 class AirportsController < ApplicationController
 
+  before_action :set_airport, only: [:show, :update, :destroy]
+
   def index
     render json: Airport.all
   end
 
   def show
-    airport_id = params[:id]
-    render json: Airport.find(airport_id)
+    render json: @airport
   end
 
   def create
-    airport = Airport.new
-    airport.name = params[:name]
-    airport.place_count = params[:place_count]
-    airport.town_id = params[:town_id]
-    airport.save
+    airport = Airport.create!(airport_params)
     render json: airport
   end
 
+  def update
+    @airport.update!(airport_params)
+    head :ok
+  end
+
+  def destroy
+    render json: @airport.destroy!
+  end
+
   def most_visitable
-    airport_visits = Airport.joins("join trips on airports.id = trips.airport_to_id").group(:name).count
-    render json: airport_visits.max_by{|airport, visits| visits}
+    airport = Airport.all.max { |a, b| a.trips_to.count <=> b.trips_to.count }
+    render json: airport
+  end
+
+private 
+
+  def set_airport
+    @airport = Airport.find(params[:id])
+  end
+
+  def airport_params
+    params.require([:name, :place_count, :town_id])
+    params.permit(:name, :place_count, :town_id)
   end
 
 end

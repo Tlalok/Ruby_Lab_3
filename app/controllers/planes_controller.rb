@@ -1,20 +1,38 @@
 class PlanesController < ApplicationController
 
-	def index
+  before_action :set_plane, only: [:show, :update, :destroy]
+
+  def index
     render json: Plane.all
   end
 
   def show
-    plane_id = params[:id]
-    render json: Plane.find(plane_id)
+    render json: @plane
   end
 
   def create
-    plane = Plane.new
-    plane.name = params[:name]
-    plane.place_count = params[:place_count]
-    plane.save
+    plane = Plane.create!(plane_params)
     render json: plane
+  end
+
+  def update
+    @plane.update!(plane_params)
+    head :ok
+  end
+
+  def destroy
+    render json: @plane.destroy!
+  end
+
+private 
+
+  def set_plane
+    @plane = Plane.find(params[:id])
+  end
+
+  def plane_params
+    params.require([:name, :place_count])
+    params.permit(:name, :place_count)
   end
   
 end
