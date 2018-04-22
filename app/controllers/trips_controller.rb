@@ -4,24 +4,24 @@ class TripsController < ApplicationController
   before_action :set_airport, only: [:trips_from, :trips_to]
 
   def index
-    contidion = ""
+    condition = ""
     args = {}
     if (params.has_key?(:start_date))
       args[:start_date] = DateTime.iso8601(params[:start_date])
-      contidion = "time_out >= :start_date"
+      condition = "time_out >= :start_date"
     end
     if (params.has_key?(:end_date))
-      contidion += " AND " unless (contidion.empty?)
-      contidion += "time_out <= :end_date"
+      condition += " AND " unless (condition.empty?)
+      condition += "time_out <= :end_date"
       args[:end_date] = DateTime.iso8601(params[:end_date])
     end
 
     if(params.has_key?(:plane_id))
-      render json: Plane.find(params[:plane_id]).trips.where(contidion, args)
+      render json: Plane.find(params[:plane_id]).trips.where(condition, args)
     elsif(params.has_key?(:user_id))
-      render json: User.find(params[:user_id]).trips.where(contidion, args)
+      render json: User.find(params[:user_id]).trips.where(condition, args)
     else
-      render json: Trip.where(contidion, args)
+      render json: Trip.where(condition, args)
     end
   end
 
